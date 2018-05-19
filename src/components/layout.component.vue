@@ -20,7 +20,8 @@
             @click="seatClicked(i-1, j-1)"
           >
           <span>
-            {{seatsInfo[i-1][j-1].user ? seatsInfo[i-1][j-1].user.name : ''}}
+            <strong class="text-xs-center" :style="{ width: '100%' }">{{i}}{{alphabet[j - 1]}}</strong>
+            {{seatsInfo[i-1][j-1].user ? `(${seatsInfo[i-1][j-1].user.name})` : ''}}
           </span>
           </div>
         </div>
@@ -33,9 +34,9 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'Layout',
   props: {
-    lastSelected: {
-      type: Array,
-      default: () => [],
+    canSelectAll: {
+      type: Boolean,
+      default: false,
     },
     canSelect: {
       type: Boolean,
@@ -47,6 +48,16 @@ export default {
     },
   },
   data: () => ({
+    alphabet: [
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+      'F',
+      'G',
+      'H',
+    ],
   }),
   computed: {
     ...mapGetters([
@@ -74,7 +85,7 @@ export default {
         this.choosenSeat = {};
         return;
       }
-      if (!this.seats[i][j]) {
+      if (!this.seats[i][j] || this.canSelectAll) {
         this.choosenSeat = { x: i, y: j };
       }
     },
