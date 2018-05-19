@@ -14,7 +14,7 @@
       <v-flex xs-6>
         <v-card dark color="primary">
           <v-card-text class="px-0">Slobodna mesta</v-card-text>
-          <layout :seats="seats"></layout>
+          <layout :canSelect="canSelect" :selectedSeat.sync="selectedSeat"/>
         </v-card>
       </v-flex>
     </v-layout>
@@ -23,7 +23,6 @@
 <script>
 import { QrcodeReader } from 'vue-qrcode-reader';
 import Layout from 'Components/layout.component';
-import RoomService from 'Api/room.service';
 import store from 'Store';
 import { mapGetters } from 'vuex';
 
@@ -34,20 +33,28 @@ export default {
     Layout,
   },
   data: () => ({
-
+    selectedSeat: {},
   }),
   computed: {
     ...mapGetters([
       'room',
-      'seats',
+      'userToken',
     ]),
+    canSelect() {
+      return Boolean(this.userToken);
+    },
   },
   created() {
       store.dispatch('fetchRoom');
   },
   methods: {
     onDecode(content) {
-      console.log(content);
+      store.commit('setCurrentUserToken', content);
+      setTimeout(() => {
+        this.selectedSeat = {};
+        store.commit('setCurrentUserToken', null);
+      }, 30000);
+      console.log(`${content}`);
     },
     onLocate(points) {
       console.log('LOCATE', points);

@@ -13,33 +13,14 @@
             v-for="j in colsCount"
             :key="`5${i}${j}`"
             :class="[
-              selectedSeats[i-1][j-1] ? 'seat-taken' : 'seat-free',
-              isLastSelected(i-1,j-1) ? 'seat-booked' : ''
+              seats[i-1][j-1] ? 'seat-taken' : 'seat-free',
+              isSelected(i-1,j-1) ? 'seat-booked' : ''
             ]"
             class="layout-seat"
             @click="seatClicked(i-1, j-1)"
           >
-            <!-- {{ i-1 }} -->
-            <!-- {{ j-1 }} -->
           </div>
         </div>
-      </div>
-      <div
-        v-if="isCinemaAdmin"
-        class="layout-admin-panel"
-      >
-        <v-btn
-          color="info darken-1"
-          @click.native="addColumn">
-          add column
-          <v-icon class="ml-2">view_column</v-icon>
-        </v-btn>
-        <v-btn
-          color="info darken-1"
-          @click.native="addRow">
-          add row
-          <v-icon class="ml-2">playlist_add</v-icon>
-        </v-btn>
       </div>
     </v-container>
   </div>
@@ -49,79 +30,57 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'Layout',
   props: {
-    seats: {
-      type: Array,
-      default: () => [[]], // nule i jedinice
-    },
     lastSelected: {
       type: Array,
       default: () => [],
     },
+    canSelect: {
+      type: Boolean,
+      default: false,
+    },
+    selectedSeat: {
+      type: Object,
+      default: () => ({}),
+    },
   },
+  data: () => ({
+  }),
   computed: {
-    ...mapGetters(['isCinemaAdmin']),
-    selectedSeats: {
+    choosenSeat: {
       get() {
-        return this.seats;
+        return this.selectedSeat;
       },
       set(value) {
-        this.$emit('update:seats', value);
+        this.$emit('update:selectedSeat', value);
       },
     },
-    lastSelectedSeats: {
-      get() {
-        return this.lastSelected;
-      },
-      set(value) {
-        this.$emit('update:last-selected', value);
-      },
-    },
+    ...mapGetters(['seats']),
     rowsCount() {
-      return this.selectedSeats.length;
+      return this.seats.length;
     },
     colsCount() {
-      return this.selectedSeats[0].length;
+      return this.seats[0].length;
     },
   },
   methods: {
-    isLastSelected(i, j) {
-      return Boolean(_.findIndex(this.lastSelectedSeats, (o) => {
-        return o.x === i && o.y === j;
-      }) + 1);
-    },
-    bookOrUnbook(i, j) {
-      const index = _.findIndex(this.lastSelectedSeats, (o) => {
-        return o.x === i && o.y === j;
-      });
-      if (index === -1) {
-        this.lastSelectedSeats.push({ x: i, y: j });
-        this.lastSelectedSeats = this.lastSelectedSeats;
+    selectSeat(i, j) {
+      if (this.choosenSeat.x === i && this.choosenSeat.y === j) {
+        this.choosenSeat = {};
         return;
       }
-      this.lastSelectedSeats.splice(index, 1);
+      if (!this.seats[i][j]) {
+        this.choosenSeat = { x: i, y: j };
+      }
     },
-    isSeatTaken(i, j) {
-      return !this.selectedSeats[i][j];
+    isSelected(i, j) {
+      return this.choosenSeat.x === i && this.choosenSeat.y === j;
     },
     seatClicked(i, j) {
-      // nije admin => bookira karte
-      if (!this.isCinemaAdmin) {
-        if (this.isSeatTaken(i, j)) {
-          return;
-        }
-        this.bookOrUnbook(i, j);
+      if (!this.canSelect) {
         return;
       }
-      this.selectedSeats[i][j] = this.selectedSeats[i][j] === 1 ? 0 : 1;
+      this.selectSeat(i, j);
       this.$forceUpdate();
-    },
-    addRow() {
-      this.selectedSeats.push(Array(...Array(this.colsCount)).map(Number.prototype.valueOf, 1));
-    },
-    addColumn() {
-      _.forEach(this.selectedSeats, (x) => {
-        x.push(1);
-      });
     },
   },
 };

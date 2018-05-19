@@ -1,5 +1,7 @@
 const ENVIRONMENTS = {
   'localhost': 'dev',
+  '192.168.17.183': 'dev',
+  '0.0.0.0': 'dev',
   'project.local  ': 'dev',
   'stagebackend.com': 'stage',
 };

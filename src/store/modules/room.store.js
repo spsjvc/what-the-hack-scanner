@@ -1,6 +1,7 @@
 import RoomService from 'Api/room.service';
 
 const state = {
+  userToken: null,
   room: {
     layout: [[]],
   },
@@ -9,6 +10,7 @@ const state = {
 const getters = {
   room: (state) => state.room,
   seats: (state) => state.room.layout,
+  userToken: (state) => state.userToken,
 };
 
 const actions = {
@@ -19,6 +21,9 @@ const actions = {
 };
 
 const mutations = {
+  setCurrentUserToken(state, token) {
+    state.userToken = token;
+  },
   setRoom(state, roomData) {
     state.room = roomData;
   },
