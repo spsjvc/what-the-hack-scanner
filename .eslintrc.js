@@ -13,6 +13,9 @@ module.exports = {
 		'vue',
 		'html',
 	],
+	globals: {
+			'_': false
+	},
 	rules: {
 		'accessor-pairs': 'error',
 		'array-bracket-newline': 'error',

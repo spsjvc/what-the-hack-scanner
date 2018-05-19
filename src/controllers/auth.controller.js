@@ -9,7 +9,8 @@ const AUTH_HEADER = 'Authorization';
 
 export default {
   setLocalStorageAuthData(data) {
-    localStorage.setItem('token', data.token || null);
+    console.log(data);
+    localStorage.setItem('access_token', data.access_token || null);
     localStorage.setItem('user_id', data.user ? data.user.id : null);
     localStorage.setItem('user', JSON.stringify(data.user));
   },
@@ -21,7 +22,7 @@ export default {
     }
     _.assign(
       Axios.defaults.headers,
-      { 'Authorization': 'JWT ' + localStorage.getItem('token') }
+      { 'Authorization': 'Bearer ' + localStorage.getItem('access_token') }
     );
   },
 
@@ -78,7 +79,7 @@ export default {
   logout() {
     AuthApiService.logout().then(() => {
       this.setLocalStorageAuthData({
-        token: null,
+        access_token: null,
         user: null,
       });
       this.setAuthHeader(true);

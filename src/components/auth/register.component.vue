@@ -16,12 +16,20 @@
         <v-card-text>
           <v-form @submit="submit">
             <v-text-field
-              v-model="username"
+              v-model="name"
               prepend-icon="person"
-              name="username"
-              label="Username"
+              name="name"
+              label="Name"
               type="text"
-              data-vv-name="username"
+              data-vv-name="name"
+              required/>
+            <v-text-field
+              v-model="email"
+              prepend-icon="person"
+              name="email"
+              label="Email"
+              type="text"
+              data-vv-name="email"
               required/>
             <v-text-field
               v-model="password"
@@ -63,6 +71,7 @@ export default {
     return {
       username: '',
       password: '',
+      email: '',
       registerErrors: [],
     };
   },
@@ -70,7 +79,8 @@ export default {
     submit(event) {
       event.preventDefault();
       AuthController.register({
-        username: this.username,
+        name: this.name,
+        email: this.email,
         password: this.password,
       });
     },

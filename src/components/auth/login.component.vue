@@ -15,12 +15,12 @@
         <v-card-text>
           <v-form>
             <v-text-field
-              v-model="username"
+              v-model="email"
               prepend-icon="person"
-              name="username"
-              label="Username"
+              name="email"
+              label="Email"
               type="text"
-              data-vv-name="username"/>
+              data-vv-name="email"/>
             <v-text-field
               id="password"
               v-model="password"
@@ -49,14 +49,14 @@ export default {
   name: 'Login',
   data() {
     return {
-      username: '',
+      email: '',
       password: '',
     };
   },
   methods: {
     submit() {
       AuthController.login({
-        username: this.username,
+        email: this.email,
         password: this.password,
       });
     },

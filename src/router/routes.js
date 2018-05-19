@@ -3,12 +3,21 @@ import Login from 'Components/auth/login.component';
 import Register from 'Components/auth/register.component';
 import Home from 'Components/home.component';
 import Welcome from 'Components/welcome.component';
+import QRReader from 'Components/qr-reader.component';
 
 export const routes = [
   {
     path: '/',
     name: 'welcome',
     component: Welcome,
+    meta: {
+      guest: true,
+    },
+  },
+  {
+    path: '/read',
+    name: 'read',
+    component: QRReader,
     meta: {
       guest: true,
     },
@@ -32,7 +41,7 @@ export const routes = [
   {
     path: '/home',
     name: 'home',
-    component: Home,
+    component: QRReader,
     meta: {
       logged: true,
     },

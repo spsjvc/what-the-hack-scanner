@@ -5,8 +5,13 @@ const ENVIRONMENTS = {
 };
 
 const BACKEND_HOSTNAMES = {
-  'dev': 'http://localhost:8000',
+  'dev': 'http://wth.aleksandar-babic.com',
   'stage': 'http://stagebackend.com',
+};
+
+const SOCKET_URL = {
+  'dev': 'http://wth.aleksandar-babic.com:8080',
+  'stage': 'http://wth.aleksandar-babic.com:8080',
 };
 
 const API_ROUTE = '/api';

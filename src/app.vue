@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app dark>
     <v-navigation-drawer
       v-model="drawer"
       fixed
@@ -40,7 +40,7 @@
     </v-navigation-drawer>
     <v-toolbar app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"/>
-      <v-toolbar-title>Tahi</v-toolbar-title>
+      <v-toolbar-title>Pametna čitaonica</v-toolbar-title>
       <v-spacer/>
       <v-toolbar-items class="hidden-sm-and-down"/>
     </v-toolbar>
