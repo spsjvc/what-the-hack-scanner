@@ -2,7 +2,7 @@
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
       <v-flex xs6>
-        <v-card dark color="primary">
+        <v-card dark color="primary" class="pb-1 px-1">
           <v-card-text class="">QR čitač</v-card-text>
           <qrcode-reader
             @decode="onDecode"
@@ -43,11 +43,7 @@ export default {
     ]),
   },
   created() {
-    RoomService.getRoom(1).then((response) => {
-      // const data = response.data;
-      // this.seats = data.layout;
-      store.commit('setRoom', response.data);
-    });
+      store.dispatch('fetchRoom');
   },
   methods: {
     onDecode(content) {

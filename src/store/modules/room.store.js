@@ -25,6 +25,7 @@ const mutations = {
 };
 
 export {
+  actions,
   state,
   getters,
   mutations,
