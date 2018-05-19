@@ -13,6 +13,7 @@ const getters = {
   seats: (state) => state.room.layout,
   userToken: (state) => state.userToken,
   seatsInfo: (state) => state.room.seats ? _.chunk(state.room.seats, 5) : [[]],
+  reservations: (state) => state.room.reservations,
   bookingUser: (state) => state.bookingUser,
   // timeUntilTaken: (state) => {
     // state.room

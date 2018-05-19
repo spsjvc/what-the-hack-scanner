@@ -1,7 +1,6 @@
 
 import Login from 'Components/auth/login.component';
 import Register from 'Components/auth/register.component';
-import Home from 'Components/home.component';
 import Welcome from 'Components/welcome.component';
 import QRReader from 'Components/qr-reader.component';
 

@@ -10,6 +10,6 @@ export default {
     return Axios.post('users/get-user-by-token', { access_token: token });
   },
   initiate(data) {
-    return Axios.post('/reservations/initiate', data);
+    return Axios.post('/users/enter-without-reservation', data);
   },
 };

@@ -5,6 +5,7 @@
         <v-card dark color="secondary" class="pb-1 px-1">
           <v-card-text class="">QR čitač</v-card-text>
           <qrcode-reader
+            v-if="isScannerShown"
             @decode="onDecode"
             class="ma-1"
           ></qrcode-reader>
@@ -17,6 +18,17 @@
         </v-card>
       </v-flex>
     </v-layout>
+    <v-dialog
+      v-model="showBigMessage"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      scrollable
+    >
+      <v-card >
+        <div class="big-message-wrapper"><span class="big-message">{{ bigMessage }}</span></div>
+      </v-card>
+    </v-dialog>
     <v-dialog
       v-model="dialog"
       fullscreen
@@ -43,7 +55,7 @@
                 <h3 class="my-5">Korisnik: {{ selectedSeatReservations.user.name}}</h3>
               </template>
               <template v-else>
-                <h3 class="my-5">Mesto je slobodno do: <span>{{  }}</span></h3>
+                <h3 class="my-5">Mesto je slobodno do: <span>{{ firstReservation(selectedSeat.x, selectedSeat.y) }}</span></h3>
                 <h3 class="my-1">Rezervisi do:</h3>
                 <v-time-picker class="my-4" v-model="until"></v-time-picker>
               </template>
@@ -94,17 +106,21 @@ export default {
     Layout,
   },
   data: () => ({
+    showBigMessage: false,
+    bigMessage: '',
     snackbar: false,
     message: '',
     selectedSeat: {},
     dialog: false,
     until: null,
+    isScannerShown: true,
   }),
   computed: {
     ...mapGetters([
       'room',
       'userToken',
       'seatsInfo',
+      'reservations',
       'bookingUser',
     ]),
     canSelect() {
@@ -118,9 +134,33 @@ export default {
     store.dispatch('fetchRoom');
   },
   methods: {
+    seatByCoord(i, j) {
+      const a = _.filter(this.room.seats, (x) => x.id === this.idByCoords(i, j))[0];
+      return a;
+    },
+    idByCoords(i, j) {
+      return _.chunk(this.room.seats, 5)[i][j].id;
+    },
+    reservationForSeat(i, j) {
+      const now = (new Date()).toISOString();
+      return _.filter(this.reservations, (r) => {
+        return r.time_start < now && r.time_end < now && r.seat_id === this.idByCoords(i, j);
+      });
+    },
+    lastReservation(i, j) {
+      return _.orderBy(this.reservationForSeat(i, j), ['time_end'], ['desc'])[0];
+    },
+    firstReservation(i, j) {
+      return _.orderBy(this.reservationForSeat(i, j), ['time_end'], ['asc'])[0];
+    },
     initiate() {
-      RoomService.initiate({ access_token: this.userToken, until: this.until }).
+      RoomService.initiate({
+        access_token: this.userToken,
+        until: this.until,
+        seat_id: this.idByCoords(this.selectedSeat.x, this.selectedSeat.y),
+      }).
         then(() => {
+          this.showBig(`Dobrodosli, ${this.bookingUser.name}`);
           this.closeDialog();
         }).
         catch(() => {
@@ -139,29 +179,52 @@ export default {
       this.selectedSeat = {};
       store.commit('setCurrentUserToken', null);
     },
+    resetScanner() {
+      this.isScannerShown = false;
+      setTimeout(() => {
+        this.isScannerShown = true;
+      }, 1);
+    },
+    showBig(message) {
+      this.showBigMessage = true;
+      this.bigMessage = message;
+      setTimeout(() => {
+        this.showBigMessage = false;
+      }, 3000);
+    },
     async onDecode(content) {
       store.commit('setCurrentUserToken', content);
-      const data = await RoomService.getUser(`${content}`);
-      console.log(data.data);
-      if (data.data.reservation) {
-        this.resetReservation();
-        console.log('jebote');
+      const response = await RoomService.getUser(`${content}`);
+      this.resetScanner();
+      if (response.data.reservation) {
+        if (response.data.reservation.seat.user_id === null) {
+          this.showBig(`Dovidjenja, ${response.data.user.name}`);
+          this.resetReservation();
+          return;
+        }
+          this.resetReservation();
+          this.showBig(`Dobrodosli, ${response.data.user.name}`);
         return;
       }
 
       // nije rezervisao, sada bira
-      store.commit('setBookingUser', data.data.user);
+      store.commit('setBookingUser', response.data.user);
       this.dialog = true;
-
-      // setTimeout(() => {
-        // this.resetReservation();
-      // }, 30000);
-      // console.log(`${content}`);
     },
-    // onLocate(points) {
-    //   console.log('LOCATE', points);
-    // },
   },
 };
 
 </script>
+<style>
+.big-message {
+  color: green;
+  text-shadow: 3px greenyellow;
+  font-size: 40px;
+}
+.big-message-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+</style>

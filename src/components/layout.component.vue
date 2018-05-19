@@ -22,6 +22,8 @@
           <span>
             <strong class="text-xs-center" :style="{ width: '100%' }">{{i}}{{alphabet[j - 1]}}</strong>
             {{seatsInfo[i-1][j-1].user ? `(${seatsInfo[i-1][j-1].user.name})` : ''}}
+            <br>
+            {{ lastReservation(i, j) ? lastReservation(i, j).time_end.substring(10,16) : '' }}
           </span>
           </div>
         </div>
@@ -62,6 +64,8 @@ export default {
   computed: {
     ...mapGetters([
       'seats',
+      'room',
+      'reservations',
       'seatsInfo',
     ]),
     choosenSeat: {
@@ -80,6 +84,25 @@ export default {
     },
   },
   methods: {
+    seatIDByCoord(i, j) {
+      const arst = _.chunk(this.room.seats, 5)[i - 1][j - 1];
+      return arst ? arst.id : null;
+    },
+    seatByCoord(i, j) {
+      return _.filter(this.room.room.seats, (x) => x.id === this.seatIDByCoord(i, j))[0];
+    },
+    reservationForSeat(i, j) {
+      const now = (new Date()).toISOString();
+      return _.filter(this.reservations, (r) => {
+        return r.time_start < now && r.time_end < now && r.seat_id === this.seatIDByCoord(i, j);
+      });
+    },
+    lastReservation(i, j) {
+      return _.orderBy(this.reservationForSeat(i, j), ['time_end'], ['desc'])[0];
+    },
+    firstReservation(i, j) {
+      return _.orderBy(this.reservationForSeat(i, j), ['time_end'], ['asc'])[0];
+    },
     selectSeat(i, j) {
       if (this.choosenSeat.x === i && this.choosenSeat.y === j) {
         this.choosenSeat = {};
