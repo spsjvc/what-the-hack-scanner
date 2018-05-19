@@ -9,6 +9,7 @@ import 'vuetify/dist/vuetify.min.css';
 import Config from './config';
 import VeeValidate from 'vee-validate';
 import 'vue-qrcode-reader/dist/vue-qrcode-reader.css';
+import * as deepstream from 'deepstream.io-client-js';
 
 
 import AuthController from 'Controllers/auth.controller';
@@ -24,6 +25,13 @@ Vue.use(VeeValidate);
 Axios.defaults.baseURL = Config.getApiUrl();
 Axios.defaults.headers.Accept = 'application/json';
 Axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
+
+const client = deepstream('ws://wth.aleksandar-babic.com:6020');
+client.login();
+client.event.subscribe('/rooms/1', (data) => {
+  // store.commit('setRoom', data);
+  console.log(data);
+});
 
 /* eslint-disable no-new */
 new Vue({

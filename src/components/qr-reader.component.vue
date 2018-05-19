@@ -45,7 +45,7 @@ export default {
     },
   },
   created() {
-      store.dispatch('fetchRoom');
+    store.dispatch('fetchRoom');
   },
   methods: {
     onDecode(content) {

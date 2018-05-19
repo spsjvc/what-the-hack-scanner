@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "deepstream.io-client-js": "^2.3.0",
     "eslint-plugin-html": "^4.0.2",
     "lodash": "^4.17.5",
     "vee-validate": "^2.0.6",

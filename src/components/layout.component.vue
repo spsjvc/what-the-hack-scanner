@@ -19,6 +19,9 @@
             class="layout-seat"
             @click="seatClicked(i-1, j-1)"
           >
+          <span>
+            {{seatsInfo[i-1][j-1].user ? seatsInfo[i-1][j-1].user.name : ''}}
+          </span>
           </div>
         </div>
       </div>
@@ -46,6 +49,10 @@ export default {
   data: () => ({
   }),
   computed: {
+    ...mapGetters([
+      'seats',
+      'seatsInfo',
+    ]),
     choosenSeat: {
       get() {
         return this.selectedSeat;
@@ -54,7 +61,6 @@ export default {
         this.$emit('update:selectedSeat', value);
       },
     },
-    ...mapGetters(['seats']),
     rowsCount() {
       return this.seats.length;
     },
@@ -111,6 +117,9 @@ export default {
 .layout-seat {
   flex: 1;
   margin: 4px 4px 4px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .seat-taken {
   background: crimson;
@@ -126,6 +135,5 @@ export default {
   left: 0;
   bottom: 0;
 }
-
 </style>
 

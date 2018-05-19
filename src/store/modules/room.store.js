@@ -11,6 +11,7 @@ const getters = {
   room: (state) => state.room,
   seats: (state) => state.room.layout,
   userToken: (state) => state.userToken,
+  seatsInfo: (state) => state.room.seats ? _.chunk(state.room.seats, 5) : [[]],
 };
 
 const actions = {
