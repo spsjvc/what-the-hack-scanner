@@ -103,7 +103,7 @@ export default {
 };
 </script>
 <style>
-.layout-container {
+/* .layout-container {
   height: 70vh;
   width: 100%;
   display: flex;
@@ -145,6 +145,51 @@ export default {
   position: absolute;
   left: 0;
   bottom: 0;
+} */
+
+
+.layout-container {
+ height: 70vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
 }
+.layout-row {
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.layout-row:first-child {
+  padding-top: 4px;
+}
+.layout-row:last-child {
+  padding-bottom: 4px;
+}
+.layout-seat {
+   flex: 1;
+  margin: 4px 4px 4px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+
+}
+.seat-taken {
+  background: #D81159;
+}
+.seat-booked {
+  background: #FFBC42 !important;
+}
+.seat-free {
+  background: #218380;
+}
+.layout-admin-panel {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
 </style>
 

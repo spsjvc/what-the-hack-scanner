@@ -37,17 +37,15 @@
           <v-layout row>
             <v-flex xs-6 md-6>
               <template v-if="!selectedSeatReservations.id">
-                Odaberite mesto
+                <h2 class="my-5">Odaberite mesto</h2>
               </template>
               <template v-else-if="selectedSeatReservations.user">
-                <p>
-                  Korisnik: {{ selectedSeatReservations.user.name}}
-                </p>
+                <h3 class="my-5">Korisnik: {{ selectedSeatReservations.user.name}}</h3>
               </template>
               <template v-else>
-                Mesto je slobodno do: <span>{{  }}</span>
-                Rezervisi do:
-                <v-time-picker v-model="until"></v-time-picker>
+                <h3 class="my-5">Mesto je slobodno do: <span>{{  }}</span></h3>
+                <h3 class="my-1">Rezervisi do:</h3>
+                <v-time-picker class="my-4" v-model="until"></v-time-picker>
               </template>
 
             </v-flex>
@@ -72,6 +70,14 @@
           </v-card-actions>
        </v-card>
     </v-dialog>
+    <v-snackbar
+      :timeout="5000"
+      top
+      v-model="snackbar"
+    >
+      {{ message }}
+      <v-btn flat color="pink" @click.native="snackbar = false">Zatvori</v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -88,6 +94,8 @@ export default {
     Layout,
   },
   data: () => ({
+    snackbar: false,
+    message: '',
     selectedSeat: {},
     dialog: false,
     until: null,
@@ -116,8 +124,12 @@ export default {
           this.closeDialog();
         }).
         catch(() => {
-          console.log('nije uspelo bukiranje');
+          this.showSnackbar('Rezervisanje nije uspelo! Pokusajte ponovo');
         });
+    },
+    showSnackbar(message) {
+      this.message = message;
+      this.snackbar = true;
     },
     closeDialog() {
       this.resetReservation();
@@ -130,8 +142,10 @@ export default {
     async onDecode(content) {
       store.commit('setCurrentUserToken', content);
       const data = await RoomService.getUser(`${content}`);
+      console.log(data.data);
       if (data.data.reservation) {
         this.resetReservation();
+        console.log('jebote');
         return;
       }
 
