@@ -5,7 +5,7 @@
         <v-card color="secondary">
           <v-card-text class="">QR čitač</v-card-text>
           <qrcode-reader
-            v-if="isScannerShown"
+            :paused="isPaused"
             @decode="onDecode"
             class="ma-1"
           ></qrcode-reader>
@@ -166,7 +166,7 @@ export default {
     dialog: false,
     until: null,
     additional: '',
-    isScannerShown: true,
+    isPaused: false,
     exitModal: false,
   }),
   computed: {
@@ -244,16 +244,11 @@ export default {
       this.additional = '';
       this.resetReservation();
       this.dialog = false;
+      this.isPaused = false;
     },
     resetReservation() {
       this.selectedSeat = {};
       store.commit('setCurrentUserToken', null);
-    },
-    resetScanner() {
-      this.isScannerShown = false;
-      setTimeout(() => {
-        this.isScannerShown = true;
-      }, 100);
     },
     showBig(message) {
       this.showBigMessage = true;
@@ -273,8 +268,9 @@ export default {
       this.exitModal = false;
     },
     async onDecode(content) {
-      this.resetScanner();
+      this.isPaused = true;
       if (_.isEmpty(content)) {
+        this.isPaused = false;
         return;
       }
       store.commit('setCurrentUserToken', content);
