@@ -21,9 +21,9 @@
           >
           <span>
             <strong class="text-xs-center" :style="{ width: '100%' }">{{i}}{{alphabet[j - 1]}}</strong>
-            <!-- {{seatsInfo[i-1][j-1].user ? `(${seatsInfo[i-1][j-1].user.name})` : ''}} -->
-            <!-- <br> -->
-            <!-- {{ lastReservation(i, j) ? lastReservation(i, j).time_end.substring(10,16) : '' }} -->
+            {{seatsInfo[i-1][j-1].user ? `(${seatsInfo[i-1][j-1].user.name})` : ''}}
+            <br>
+            {{ lastReservation(i, j) ? lastReservation(i, j).time_end.substring(10,16) : '' }}
           </span>
           </div>
         </div>
@@ -181,6 +181,7 @@ export default {
 .layout-row {
   display: flex;
   flex-grow: 1;
+  max-height: 20%;
   justify-content: flex-start;
   align-items: stretch;
 }
