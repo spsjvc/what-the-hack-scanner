@@ -131,6 +131,17 @@
       {{ message }}
       <v-btn flat color="pink" @click.native="snackbar = false">Zatvori</v-btn>
     </v-snackbar>
+    <v-dialog v-model="exitModal" persistent max-width="400">
+      <v-card>
+        <v-card-title class="headline">Odaberite tip odlaska</v-card-title>
+        <v-card-text>Da li zelite da odete na pauzu (do 15min) ili da napustite citaonicu?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" flat @click.native="goToPause">Pauza</v-btn>
+          <v-btn color="green darken-1" flat @click.native="goToExit">Odlazak</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -156,6 +167,7 @@ export default {
     until: null,
     additional: '',
     isScannerShown: true,
+    exitModal: false,
   }),
   computed: {
     ...mapGetters([
@@ -250,26 +262,53 @@ export default {
         this.showBigMessage = false;
       }, 3000);
     },
+    goToPause() {
+      this.showBig(`Fino se odmorite, ${this.bookingUser.name}`);
+      RoomService.pauseRoom({ access_token: this.userToken });
+      this.exitModal = false;
+    },
+    goToExit() {
+      this.showBig(`Doviđenja, ${this.bookingUser.name}`);
+      RoomService.exitRoom({ access_token: this.userToken });
+      this.exitModal = false;
+    },
     async onDecode(content) {
       this.resetScanner();
       if (_.isEmpty(content)) {
         return;
       }
       store.commit('setCurrentUserToken', content);
-      const response = await RoomService.getUser(`${content}`);
-      if (response.data.reservation) {
-        if (response.data.reservation.seat.user_id === null) {
-          this.showBig(`Dovidjenja, ${response.data.user.name}`);
+
+      let response = await RoomService.getUser(`${content}`);
+      response = response.data;
+      store.commit('setBookingUser', response.user);
+
+      if (response.inside === true) {
+        // na pauzi je i vraca se
+        if (response.status === 'pause') {
+          this.showBig(`Dobrodosli nazad, ${response.user.name}`);
+          return;
+        }
+
+        // izlazi ili ide na pauzu
+        this.exitModal = true;
+        return;
+      }
+
+      // napolju je i ulazi tek
+      if (response.reservation) {
+        if (response.reservation.seat.user_id === null) {
+          this.showBig(`Doviđenja, ${response.user.name}`);
           this.resetReservation();
           return;
         }
           this.resetReservation();
-          this.showBig(`Dobrodosli, ${response.data.user.name}`);
+          this.showBig(`Dobrodosli, ${response.user.name}`);
         return;
       }
 
       // nije rezervisao, sada bira
-      store.commit('setBookingUser', response.data.user);
+      store.commit('setBookingUser', response.user);
       this.dialog = true;
     },
   },

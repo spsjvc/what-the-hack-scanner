@@ -19,12 +19,12 @@ Vue.config.productionTip = false;
 Vue.use(Vuetify);
 Vue.prototype.router = router;
 
-AuthController.initStoreAuth();
 Vue.use(VeeValidate);
 
 Axios.defaults.baseURL = Config.getApiUrl();
 Axios.defaults.headers.Accept = 'application/json';
 Axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
+AuthController.initStoreAuth();
 
 websocket.initialize();
 /* eslint-disable no-new */

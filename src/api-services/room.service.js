@@ -15,4 +15,10 @@ export default {
   createRoom(data) {
     return Axios.post('/rooms', data);
   },
+  exitRoom(data) {
+    return Axios.post('/users/exit-from-room', data);
+  },
+  pauseRoom(data) {
+    return Axios.post('/users/pause', data);
+  },
 };
