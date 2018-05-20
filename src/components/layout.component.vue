@@ -172,7 +172,7 @@ export default {
 
 
 .layout-container {
- height: 70vh;
+  height: 70vh;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -191,7 +191,7 @@ export default {
   padding-bottom: 4px;
 }
 .layout-seat {
-   flex: 1;
+  flex: 1;
   margin: 4px 4px 4px 4px;
   display: flex;
   align-items: center;

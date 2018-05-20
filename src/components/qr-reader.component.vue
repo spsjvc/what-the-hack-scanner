@@ -1,8 +1,8 @@
 <template>
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
-      <v-flex xs6 style="justify-content: center">
-        <v-card color="secondary" class="pb-1 px-1">
+      <v-flex xs6 sm6 md6 lg6 style="justify-content: center">
+        <v-card color="secondary">
           <v-card-text class="">QR čitač</v-card-text>
           <qrcode-reader
             v-if="isScannerShown"
@@ -10,8 +10,22 @@
             class="ma-1"
           ></qrcode-reader>
         </v-card>
+         <v-container grid-list-md text-xs-center>
+          <v-layout row wrap>
+            <v-flex xs6>
+              <v-card color="secondary">
+                <v-card-text class="px-0">Slobodnih mesta: {{ freeSeats }}</v-card-text>
+              </v-card>
+            </v-flex>
+            <v-flex xs6>
+              <v-card color="secondary">
+                <v-card-text class="px-0">Zauzetih mesta: {{ takenSeats }}</v-card-text>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
       </v-flex>
-      <v-flex xs-6>
+      <v-flex xs6 sm6 md6 lg6>
         <v-card color="secondary">
           <v-card-text class="px-0">Trenutno stanje</v-card-text>
           <layout :canSelect="false" :selectedSeat.sync="selectedSeat"/>
@@ -130,6 +144,8 @@ export default {
       'room',
       'userToken',
       'seatsInfo',
+      'freeSeats',
+      'takenSeats',
       'reservations',
       'bookingUser',
     ]),
