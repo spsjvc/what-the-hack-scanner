@@ -248,6 +248,7 @@ export default {
     },
     resetReservation() {
       this.selectedSeat = {};
+      this.isPaused = false;
       store.commit('setCurrentUserToken', null);
     },
     showBig(message) {
@@ -261,11 +262,13 @@ export default {
       this.showBig(`Fino se odmorite, ${this.bookingUser.name}`);
       RoomService.pauseRoom({ access_token: this.userToken });
       this.exitModal = false;
+      this.isPaused = false;
     },
     goToExit() {
       this.showBig(`Doviđenja, ${this.bookingUser.name}`);
       RoomService.exitRoom({ access_token: this.userToken });
       this.exitModal = false;
+      this.isPaused = false;
     },
     async onDecode(content) {
       this.isPaused = true;
@@ -275,13 +278,21 @@ export default {
       }
       store.commit('setCurrentUserToken', content);
 
-      let response = await RoomService.getUser(`${content}`);
+      let response = null;
+      try {
+        response = await RoomService.getUser(`${content}`);
+      } catch (e) {
+        this.isPaused = false;
+        return;
+      }
+
       response = response.data;
       store.commit('setBookingUser', response.user);
 
       if (response.inside === true) {
         // na pauzi je i vraca se
         if (response.status === 'pause') {
+          this.isPaused = false;
           this.showBig(`Dobrodosli nazad, ${response.user.name}`);
           return;
         }
