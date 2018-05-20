@@ -62,7 +62,7 @@
           </v-toolbar>
           <v-container grid-list-md>
             <v-layout row>
-              <v-flex xs-6 pa-3 md-6>
+              <v-flex xs6 pa-3 md6>
                 <template v-if="!selectedSeatReservations.id">
                   <h2 >Odaberite mesto</h2>
                 </template>
@@ -93,7 +93,7 @@
                   </v-container>
                 </template>
               </v-flex>
-              <v-flex xs-6 md-6>
+              <v-flex xs6 md6>
                 <layout :canSelect="true" :selectedSeat.sync="selectedSeat" :canSelectAll="true"/>
               </v-flex>
             </v-layout>
