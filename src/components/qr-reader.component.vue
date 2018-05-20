@@ -102,6 +102,7 @@
             <v-btn
               flat
               color="orange"
+              @click="closeDialog"
             >
               Otkaži
             </v-btn>
