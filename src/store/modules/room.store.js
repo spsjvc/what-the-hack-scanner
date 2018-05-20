@@ -1,4 +1,5 @@
 import RoomService from 'Api/room.service';
+import websocket from '../../util/sockets';
 
 const state = {
   userToken: null,
@@ -24,6 +25,9 @@ const actions = {
   async fetchRoom({ commit }) {
     const room = await RoomService.getRoom(1);
     commit('setRoom', room.data);
+    websocket.subscribe('/rooms/1', (event) => {
+      commit('setRoom', event.data);
+    });
   },
 };
 
