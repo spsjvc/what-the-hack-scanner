@@ -2,15 +2,24 @@
 import Login from 'Components/auth/login.component';
 import Register from 'Components/auth/register.component';
 import QRReader from 'Components/qr-reader.component';
+import AdminPanel from 'Components/admin-panel.component.vue';
 
 export const routes = [
   {
     path: '/',
     name: 'welcome',
     component: QRReader,
-    meta: {
-      guest: true,
-    },
+    // meta: {
+    //   guest: true,
+    // },
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: AdminPanel,
+    // meta: {
+      // guest: true,
+    // },
   },
   {
     path: '/read',

@@ -12,4 +12,7 @@ export default {
   initiate(data) {
     return Axios.post('/users/enter-without-reservation', data);
   },
+  createRoom(data) {
+    return Axios.post('/rooms', data);
+  },
 };
