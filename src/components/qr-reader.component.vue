@@ -60,34 +60,44 @@
             <v-toolbar-items>
             </v-toolbar-items>
           </v-toolbar>
-          <v-layout row>
-            <v-flex xs-6 pa-3 md-6>
-              <template v-if="!selectedSeatReservations.id">
-                <h2 class="my-5">Odaberite mesto</h2>
-              </template>
-              <template v-else-if="selectedSeatReservations.user">
-                <h3 class="my-5">Trenutno zauzeto od: {{ selectedSeatReservations.user.name}}</h3>
-              </template>
-              <template v-else>
-                <h3 class="my-5">Rezervacije za izabrano mesto:</h3>
-                  <template v-for="reservation in seatReservations(selectedSeat.x, selectedSeat.y)">
-                    <p :key="reservation.id">{{ reservation.time_start }} - {{ reservation.time_end }}</p>
-                  </template>
-                <v-text-field
-                  v-model="additional"
-                  multi-line
-                  name="email"
-                  label="Dodatni komentari (predmet...)"
-                  type="text"
-                  data-vv-name="razlog"/>
-                <h3 class="my-1">Rezervisi do:</h3>
-                <v-time-picker class="my-4" v-model="until"></v-time-picker>
-              </template>
-            </v-flex>
-            <v-flex xs-6 md-6>
-              <layout :canSelect="true" :selectedSeat.sync="selectedSeat" :canSelectAll="true"/>
-            </v-flex>
-          </v-layout>
+          <v-container grid-list-md>
+            <v-layout row>
+              <v-flex xs-6 pa-3 md-6>
+                <template v-if="!selectedSeatReservations.id">
+                  <h2 >Odaberite mesto</h2>
+                </template>
+                <template v-else-if="selectedSeatReservations.user">
+                  <h3>Trenutno zauzeto od: {{ selectedSeatReservations.user.name}}</h3>
+                </template>
+                <template v-else>
+                  <v-container grid-list-md>
+                    <v-layout row>
+                      <v-flex xs4>
+                        <h3>Rezervacije za izabrano mesto:</h3>
+                        <template v-for="reservation in seatReservations(selectedSeat.x, selectedSeat.y)">
+                          <p :key="reservation.id">{{ reservation.time_start }} - {{ reservation.time_end }}</p>
+                        </template>
+                      </v-flex>
+                      <v-flex xs8>
+                        <h3 class="my-1">Rezervisi do:</h3>
+                        <v-time-picker landscape elevation class="my-4 elevation-16" v-model="until"></v-time-picker>
+                        <v-text-field
+                          v-model="additional"
+                          multi-line
+                          name="email"
+                          label="Dodatni komentari (predmet...)"
+                          type="text"
+                          data-vv-name="razlog"/>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </template>
+              </v-flex>
+              <v-flex xs-6 md-6>
+                <layout :canSelect="true" :selectedSeat.sync="selectedSeat" :canSelectAll="true"/>
+              </v-flex>
+            </v-layout>
+          </v-container>
           <v-card-actions>
             <v-btn
               flat
@@ -189,7 +199,7 @@ export default {
       RoomService.initiate({
         access_token: this.userToken,
         until: this.until,
-        additional: this.additional,
+        subject: this.additional,
         seat_id: this.idByCoords(this.selectedSeat.x, this.selectedSeat.y),
       }).
         then(() => {
@@ -227,12 +237,12 @@ export default {
       }, 3000);
     },
     async onDecode(content) {
+      this.resetScanner();
       if (_.isEmpty(content)) {
         return;
       }
       store.commit('setCurrentUserToken', content);
       const response = await RoomService.getUser(`${content}`);
-      this.resetScanner();
       if (response.data.reservation) {
         if (response.data.reservation.seat.user_id === null) {
           this.showBig(`Dovidjenja, ${response.data.user.name}`);
