@@ -23,7 +23,8 @@
             <strong class="text-xs-center" :style="{ width: '100%' }">{{i}}{{alphabet[j - 1]}}</strong>
             {{seatsInfo[i-1][j-1].user ? `(${seatsInfo[i-1][j-1].user.name})` : ''}}
             <br>
-            {{ lastReservation(i, j) ? lastReservation(i, j).time_end.substring(10,16) : '' }}
+            {{ lastReservation(i, j) ? (seats[i-1][j-1] ? 'zauzeto do ' + lastReservation(i, j).time_end.substring(10,16) : 'zauzeto od ' + lastReservation(i, j).time_start.substring(10,16)): '' }}
+            <i>{{ lastReservation(i, j) ?  lastReservation(i, j).subject : '' }}</i>
           </span>
           </div>
         </div>
