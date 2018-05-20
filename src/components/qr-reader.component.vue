@@ -68,6 +68,13 @@
                 </template>
                 <template v-else-if="selectedSeatReservations.user">
                   <h3>Trenutno zauzeto od: {{ selectedSeatReservations.user.name}}</h3>
+                  <h3>Trenutno uci: {{ currentSubject(selectedSeatReservations ? selectedSeatReservations.number : null) }}</h3>
+                  <!-- <br> -->
+                  <!-- <br> -->
+                  <!-- <h3>Rezervacije za izabrano mesto:</h3> -->
+                  <!-- <template v-for="reservation in seatReservations(selectedSeat.x, selectedSeat.y)"> -->
+                    <!-- <p :key="reservation.id">{{ reservation.time_start }} - {{ reservation.time_end }}</p> -->
+                  <!-- </template> -->
                 </template>
                 <template v-else>
                   <v-container grid-list-md>
@@ -80,7 +87,7 @@
                       </v-flex>
                       <v-flex xs8>
                         <h3 class="my-1">Rezervisi do:</h3>
-                        <v-time-picker landscape elevation class="my-4 elevation-16" v-model="until"></v-time-picker>
+                        <v-time-picker landscape elevation class="my-4 elevation-16" v-model="until" format="24hr"></v-time-picker>
                         <v-text-field
                           v-model="additional"
                           multi-line
@@ -171,6 +178,12 @@ export default {
     store.dispatch('fetchRoom');
   },
   methods: {
+    currentSubject(seatId) {
+      if (seatId === null) {
+      return;
+      }
+      return _.filter(this.reservations, (x) => x.seat_id === seatId)[0].subject;
+    },
     seatReservations(x, y) {
       const seatId = this.idByCoords(x, y);
       return _.filter(this.reservations, (x) => {
