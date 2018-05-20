@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer
+    <!-- <v-navigation-drawer
       v-model="drawer"
       fixed
       app>
@@ -37,9 +37,9 @@
           <v-list-tile-content>Logout</v-list-tile-content>
         </v-list-tile>
       </v-list>
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
     <v-toolbar app>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"/>
+      <!-- <v-toolbar-side-icon @click.stop="drawer = !drawer"/> -->
       <v-toolbar-title>Pametna čitaonica</v-toolbar-title>
       <v-spacer/>
       <v-toolbar-items class="hidden-sm-and-down"/>

@@ -1,6 +1,6 @@
 import * as deepstream from 'deepstream.io-client-js';
 
-let client;
+let client = null;
 
 export default {
   initialize() {

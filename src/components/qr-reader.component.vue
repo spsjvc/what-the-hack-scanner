@@ -1,8 +1,8 @@
 <template>
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
-      <v-flex xs6>
-        <v-card dark color="secondary" class="pb-1 px-1">
+      <v-flex xs6 style="justify-content: center">
+        <v-card color="secondary" class="pb-1 px-1">
           <v-card-text class="">QR čitač</v-card-text>
           <qrcode-reader
             v-if="isScannerShown"
@@ -12,8 +12,8 @@
         </v-card>
       </v-flex>
       <v-flex xs-6>
-        <v-card dark color="secondary">
-          <v-card-text class="px-0">Slobodna mesta</v-card-text>
+        <v-card color="secondary">
+          <v-card-text class="px-0">Trenutno stanje</v-card-text>
           <layout :canSelect="false" :selectedSeat.sync="selectedSeat"/>
         </v-card>
       </v-flex>
@@ -37,8 +37,8 @@
       scrollable
     >
        <v-card tile>
-          <v-toolbar card dark color="secondary">
-            <v-btn icon dark @click.native="closeDialog">
+          <v-toolbar card  color="secondary">
+            <v-btn icon  @click.native="closeDialog">
               <v-icon>close</v-icon>
             </v-btn>
             <v-toolbar-title>Izaberi mesto</v-toolbar-title>
@@ -47,19 +47,28 @@
             </v-toolbar-items>
           </v-toolbar>
           <v-layout row>
-            <v-flex xs-6 md-6>
+            <v-flex xs-6 pa-3 md-6>
               <template v-if="!selectedSeatReservations.id">
                 <h2 class="my-5">Odaberite mesto</h2>
               </template>
               <template v-else-if="selectedSeatReservations.user">
-                <h3 class="my-5">Korisnik: {{ selectedSeatReservations.user.name}}</h3>
+                <h3 class="my-5">Trenutno zauzeto od: {{ selectedSeatReservations.user.name}}</h3>
               </template>
               <template v-else>
-                <h3 class="my-5">Mesto je slobodno do: <span>{{ firstReservation(selectedSeat.x, selectedSeat.y) }}</span></h3>
+                <h3 class="my-5">Rezervacije za izabrano mesto:</h3>
+                  <template v-for="reservation in seatReservations(selectedSeat.x, selectedSeat.y)">
+                    <p :key="reservation.id">{{ reservation.time_start }} - {{ reservation.time_end }}</p>
+                  </template>
+                <v-text-field
+                  v-model="additional"
+                  multi-line
+                  name="email"
+                  label="Dodatni komentari (predmet...)"
+                  type="text"
+                  data-vv-name="razlog"/>
                 <h3 class="my-1">Rezervisi do:</h3>
                 <v-time-picker class="my-4" v-model="until"></v-time-picker>
               </template>
-
             </v-flex>
             <v-flex xs-6 md-6>
               <layout :canSelect="true" :selectedSeat.sync="selectedSeat" :canSelectAll="true"/>
@@ -113,6 +122,7 @@ export default {
     selectedSeat: {},
     dialog: false,
     until: null,
+    additional: '',
     isScannerShown: true,
   }),
   computed: {
@@ -134,6 +144,12 @@ export default {
     store.dispatch('fetchRoom');
   },
   methods: {
+    seatReservations(x, y) {
+      const seatId = this.idByCoords(x, y);
+      return _.filter(this.reservations, (x) => {
+        return x.seat_id === seatId;
+      });
+    },
     seatByCoord(i, j) {
       const a = _.filter(this.room.seats, (x) => x.id === this.idByCoords(i, j))[0];
       return a;
@@ -157,6 +173,7 @@ export default {
       RoomService.initiate({
         access_token: this.userToken,
         until: this.until,
+        additional: this.additional,
         seat_id: this.idByCoords(this.selectedSeat.x, this.selectedSeat.y),
       }).
         then(() => {
@@ -172,6 +189,7 @@ export default {
       this.snackbar = true;
     },
     closeDialog() {
+      this.additional = '';
       this.resetReservation();
       this.dialog = false;
     },
@@ -183,7 +201,7 @@ export default {
       this.isScannerShown = false;
       setTimeout(() => {
         this.isScannerShown = true;
-      }, 1);
+      }, 100);
     },
     showBig(message) {
       this.showBigMessage = true;
@@ -193,6 +211,9 @@ export default {
       }, 3000);
     },
     async onDecode(content) {
+      if (_.isEmpty(content)) {
+        return;
+      }
       store.commit('setCurrentUserToken', content);
       const response = await RoomService.getUser(`${content}`);
       this.resetScanner();

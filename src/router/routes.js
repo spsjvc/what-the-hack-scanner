@@ -1,14 +1,13 @@
 
 import Login from 'Components/auth/login.component';
 import Register from 'Components/auth/register.component';
-import Welcome from 'Components/welcome.component';
 import QRReader from 'Components/qr-reader.component';
 
 export const routes = [
   {
     path: '/',
     name: 'welcome',
-    component: Welcome,
+    component: QRReader,
     meta: {
       guest: true,
     },
