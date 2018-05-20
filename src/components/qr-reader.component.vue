@@ -179,10 +179,10 @@ export default {
   },
   methods: {
     currentSubject(seatId) {
-      if (seatId === null) {
+        if (seatId === null) {
       return;
       }
-      return _.filter(this.reservations, (x) => x.seat_id === seatId)[0].subject;
+      return _.filter(this.reservations, (x) => x.seat_id === seatId)[0].subject; // eslint-disable-line
     },
     seatReservations(x, y) {
       const seatId = this.idByCoords(x, y);
