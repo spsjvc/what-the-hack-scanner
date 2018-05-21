@@ -252,9 +252,11 @@ export default {
       store.commit('setCurrentUserToken', null);
     },
     showBig(message) {
+      this.isPaused = true;
       this.showBigMessage = true;
       this.bigMessage = message;
       setTimeout(() => {
+        this.isPaused = false;
         this.showBigMessage = false;
       }, 3000);
     },
